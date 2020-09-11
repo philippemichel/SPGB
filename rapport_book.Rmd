@@ -1,0 +1,136 @@
+---
+title: "Bloc du ganglion sphénopalatin associé à la perfusion de Néostigmine et Atropine"
+subtitle: "Travail de Julien Baudillon"
+author: "Philippe MICHEL"
+date: "`r Sys.Date()`"
+bibliography: stat.bib
+csl: jama.csl
+lang: fr
+link-citations: true
+output:
+ prettydoc::html_pretty:
+  highlight: kate
+  theme: architect
+  toc: yes
+ html_document:
+  citation_package: bibtex
+  df_print: paged
+  highlight: espresso
+  theme: flatly
+  toc: no
+  toc_float: yes
+ pdf_document:
+  includes:
+   in_header: tete.tex
+  keep_tex: yes
+  latex_engine: lualatex
+  toc: yes
+ html_notebook:
+  fig_caption: yes
+  theme: spacelab
+ tufte::tufte_html: default
+ word_document:
+  toc: yes
+editor_options:
+ chunk_output_type: console
+---
+
+```{r setup, include= FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, cache = TRUE)
+# knitr::opts_chunk$set(echo = TRUE, warning = TRUE, message = TRUE)
+```
+
+
+```{r info}
+rm(list=ls())
+library("prettydoc")
+library("thesisph")
+library("missMDA")
+library("FactoMineR")
+library("epiDisplay")
+library("factoextra")
+library("lubridate")
+library("knitr")
+library("finalfit")
+library("viridis")
+library("stringr")
+library("tidyverse")
+library("kableExtra")
+library("graphs")
+library("rlang")
+# sessionInfo()
+exp <- FALSE
+kk <- TRUE
+```
+
+
+
+```{r import}
+# Importation d'une table .csv 
+# 
+
+```
+
+
+
+# Description
+
+## Description simple
+
+L'échantillon comporte `r dim(tt)[1]` cas. Pour ces sujets, `r dim(tt)[2]` variables ont été recueillies.
+
+```{r desc} 
+tabdescph(tt, ka = kk)
+```
+
+## Graphiques
+
+```{r graphs}
+
+```
+
+
+## Analyse factorielle
+
+Vu la faible taille de l'échantillon, pour les calculs, les données numériques (Terme & âge du décès) ont été regroupées en classe.
+
+```{r imput, cache = TRUE}
+# Imputation des données manquantes
+# nn <- estim_ncpMCA(ttc)
+ttm <- imputeMCA(ttc, ncp = 5)
+ttm <- ttm$completeObs
+```
+
+```{r facto}
+mtt <- MCA(ttm, graph = FALSE)
+fviz_mca_ind(mtt, label = "none",
+       habillage = "Evolution",
+       addEllipses = TRUE,
+       ggtheme = theme_light()
+       )
+
+fviz_mca_var(mtt,
+       repel = TRUE,
+       col.var= "contrib",
+     gradient.col = "lancet",
+       ggtheme = theme_light()
+       )
+```
+
+
+# Comparaisons
+
+Vu le faible effectifs ces résultats sont à interpréter avec prudence. 
+
+```{r comp1}
+tabcompph(tt,Participation.à.la.RC, ka = TRUE)
+```
+
+# Technique 
+
+**Petit paragraphe à ajouter en fin de “matériel & méthode”**
+
+Les données discrètes ont été décrites par leur fréquence exprimée en pourcentage avec son intervalle de confiance à 95 % et ont été comparées par le test exact de Fisher vu la faible effectif. Les intervalles de confiance n’ont été réalisés qu’après transformation angulaire. Les données numériques ont été décrites par leur moyenne (avec son intervalle de confiance à 95 % calculé par bootstrap) et l’écart-type. Les données continues ont été comparées par le test de Student après vérification de l’égalité des variances. L’analyse factorielle a été réalisée en analyse des correspondances multiples après imputation des données manquantes, possible ici en raison du faible nombre de celles-ci.
+Les statistiques ont été réalisées grâce au logiciel R[@rstat] avec en particulier les packages du Tidyverse[@tidy] & factoMineR[@facto].
+
+# References
